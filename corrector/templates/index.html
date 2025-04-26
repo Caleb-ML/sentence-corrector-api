@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Deutschify Mini 1.0 - Sentence Corrector</title>
+</head>
+<body>
+
+    <h1>
+        🇩🇪 Deutschify Mini 1.0
+    </h1>
+
+    <h3>Instant German Grammar Correction</h3>
+
+    <textarea id="inputSentence" placeholder="Type your German sentence here..." rows="4" cols="50"></textarea>
+    <br><br>
+    <button onclick="correctSentence()">Correct Sentence</button>
+
+    <h2>✅ Correction Result:</h2>
+    <div id="result"></div>
+
+    <footer style="margin-top: 30px;">
+        <hr>
+        <p>Made with ❤️ by Caleb - <a href="https://Deutschify.app" target="_blank">Visit my website</a></p>
+    </footer>
+
+    <script>
+        async function correctSentence() {
+            const sentence = document.getElementById('inputSentence').value;
+
+            if (!sentence) {
+                alert('Please enter a sentence!');
+                return;
+            }
+
+            const response = await fetch('http://127.0.0.1:8000/correct/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ sentence: sentence })
+            });
+
+            if (!response.ok) {
+                document.getElementById('result').innerText = 'Error contacting server.';
+                return;
+            }
+
+            const data = await response.json();
+
+            document.getElementById('result').innerHTML = 
+                `<strong>Corrected:</strong> ${data.corrected}<br><br>` +
+                `<strong>Explanation:</strong> ${data.explanation}<br><br>` +
+                `<strong>Difficulty:</strong> ${data.difficulty}<br><br>` +
+                `<strong>Confidence:</strong> ${data.confidence}`;
+        }
+    </script>
+
+</body>
+</html>
